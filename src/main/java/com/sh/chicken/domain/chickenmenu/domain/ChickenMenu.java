@@ -20,9 +20,7 @@ public class ChickenMenu extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "menu_id")
     private long menuId;
-
     private String menuName;
     private String img;
     private int price;
@@ -32,11 +30,8 @@ public class ChickenMenu extends BaseTimeEntity {
     @JoinColumn(name = "brandName")
     private ChickenBrand chickenBrand;
 
-    @OneToMany(mappedBy = "chickenMenu", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "chickenMenu", cascade = {CascadeType.REMOVE, CascadeType.PERSIST})
     private List<ChickenLike> chickenLikeList = new ArrayList<>();
-
-//    @OneToOne(mappedBy = "chickenMenu", cascade = CascadeType.REMOVE)
-//    private ChickenClick chickenClick;
 
 
     @Builder
@@ -48,7 +43,12 @@ public class ChickenMenu extends BaseTimeEntity {
         this.chickenBrand = chickenBrand;
     }
 
-    // 생성 메서드
+    /**
+     * 생성 메서드
+     * @param chickenMenuUploadDto
+     * @param chickenBrand
+     * @return
+     */
     public static ChickenMenu createChickenMenu(ChickenMenuUploadDto chickenMenuUploadDto, ChickenBrand chickenBrand){
 
         return ChickenMenu.builder()
@@ -59,10 +59,22 @@ public class ChickenMenu extends BaseTimeEntity {
                 .build();
     }
 
-    // 양방향 연관관계
-    public void addChickenLike(ChickenLike chickenLike){
-        this.chickenLikeList.add(chickenLike);
 
+    /**
+     * 양방향 연관관계, cascade 유의
+     */
+    public void addChickenLike(ChickenLike chickenLike){
+
+        if (chickenLike.getChickenMenu() != null) {
+            chickenLike.getChickenMenu().getChickenLikeList().remove(chickenLike);
+        }
+        this.chickenLikeList.add(chickenLike);
+        chickenLike.setChickenMenu(this);
+
+    }
+
+    public void setChickenBrand(ChickenBrand chickenBrand){
+        this.chickenBrand = chickenBrand;
     }
 
     public void updateImg(String img){

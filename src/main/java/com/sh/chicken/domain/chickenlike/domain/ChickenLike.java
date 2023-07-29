@@ -13,7 +13,6 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChickenLike {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "like_id")
@@ -33,12 +32,22 @@ public class ChickenLike {
         this.chickenMenu = chickenMenu;
     }
 
-    // 생성 메서드
+    /**
+     * 생성 메서드
+     * @param users
+     * @param chickenMenu
+     * @return
+     */
     public static ChickenLike createChickenLike(Users users, ChickenMenu chickenMenu){
         return ChickenLike.builder()
                 .users(users)
                 .chickenMenu(chickenMenu)
                 .build();
+    }
+
+    public void setChickenMenu(ChickenMenu chickenMenu){
+        this.chickenMenu = chickenMenu;
+
     }
 
 
